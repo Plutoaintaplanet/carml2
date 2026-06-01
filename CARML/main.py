@@ -5,7 +5,9 @@ from pathlib import Path
 
 from sklearn.model_selection import train_test_split
 from sklearn.compose import ColumnTransformer
-from sklearn.pipeline import Pipeline
+from sklearn.pipeline import cd "C:\Users\admin\Downloads"
+java -jar "jenkins-cli (1).jar" -s http://localhost:8080/ create-job carml-full-pipeline < "C:\Users\admin\Documents\carml\jenkins-job-carml-full.xml"
+java -jar "jenkins-cli (1).jar" -s http://localhost:8080/ create-job carml-no-docker-push < "C:\Users\admin\Documents\carml\jenkins-job-carml-no-docker-push.xml"Pipeline
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score, mean_absolute_error
