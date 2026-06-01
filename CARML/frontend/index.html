@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CarML - Vehicle Valuation & Depreciation Forecast</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="logo-area">
+                <div class="logo-icon">
+                    <i data-lucide="zap"></i>
+                </div>
+                <div class="logo-text">
+                    <span class="logo-title">CarML</span>
+                    <span class="logo-subtitle">Analytics Engine</span>
+                </div>
+            </div>
+            
+            <nav class="nav-menu">
+                <button class="nav-btn active" id="nav-btn-search" data-target="tab-search">
+                    <i data-lucide="search"></i>
+                    <span>Search & Forecast</span>
+                </button>
+                <button class="nav-btn" id="nav-btn-estimate" data-target="tab-estimate">
+                    <i data-lucide="calculator"></i>
+                    <span>Custom Estimator</span>
+                </button>
+                <button class="nav-btn" id="nav-btn-insights" data-target="tab-insights">
+                    <i data-lucide="bar-chart-2"></i>
+                    <span>Model Insights</span>
+                </button>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="status-badge">
+                    <span class="status-dot online"></span>
+                    <span>Model: Linear Regression</span>
+                </div>
+                <div class="version">v1.0.0</div>
+            </div>
+        </aside>
+
+        <!-- Main Workspace -->
+        <main class="main-content">
+            <!-- Global Header with Live Stats -->
+            <header class="dashboard-header">
+                <div class="header-welcome">
+                    <h1>Vehicle Analytics & Forecasts</h1>
+                    <p>Machine learning-powered valuation and 5-year depreciation forecasting</p>
+                </div>
+                
+                <!-- Quick Stats Row -->
+                <div class="quick-stats">
+                    <div class="stat-card" id="stat-records">
+                        <div class="stat-icon"><i data-lucide="database"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-value">-</span>
+                            <span class="stat-label">Total Vehicles</span>
+                        </div>
+                    </div>
+                    <div class="stat-card" id="stat-avg-price">
+                        <div class="stat-icon"><i data-lucide="dollar-sign"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-value">-</span>
+                            <span class="stat-label">Avg Selling Price</span>
+                        </div>
+                    </div>
+                    <div class="stat-card" id="stat-avg-kms">
+                        <div class="stat-icon"><i data-lucide="navigation"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-value">-</span>
+                            <span class="stat-label">Avg KMs Driven</span>
+                        </div>
+                    </div>
+                    <div class="stat-card" id="stat-models">
+                        <div class="stat-icon"><i data-lucide="tag"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-value">-</span>
+                            <span class="stat-label">Unique Models</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Tab Content Area -->
+            <div class="tab-content-container">
+                
+                <!-- TAB 1: SEARCH & FORECAST -->
+                <section id="tab-search" class="tab-pane active">
+                    <div class="search-layout">
+                        <!-- Filters Sidebar -->
+                        <div class="filters-panel glass-card">
+                            <div class="panel-header">
+                                <i data-lucide="sliders"></i>
+                                <h2>Filter Vehicles</h2>
+                            </div>
+                            
+                            <div class="filter-group">
+                                <label for="filter-search">Search Car Name</label>
+                                <div class="search-input-wrapper">
+                                    <i data-lucide="search" class="search-icon"></i>
+                                    <input type="text" id="filter-search" placeholder="e.g. ciaz, swift, fortuner...">
+                                </div>
+                            </div>
+                            
+                            <div class="filter-group">
+                                <label>Selling Price Range (Lakhs)</label>
+                                <div class="price-inputs">
+                                    <input type="number" id="filter-min-price" placeholder="Min" min="0" step="0.1">
+                                    <span>to</span>
+                                    <input type="number" id="filter-max-price" placeholder="Max" min="0" step="0.1">
+                                </div>
+                            </div>
+                            
+                            <div class="filter-group">
+                                <label for="filter-fuel">Fuel Type</label>
+                                <select id="filter-fuel">
+                                    <option value="All">All Fuels</option>
+                                    <option value="Petrol">Petrol</option>
+                                    <option value="Diesel">Diesel</option>
+                                    <option value="CNG">CNG</option>
+                                </select>
+                            </div>
+                            
+                            <div class="filter-group">
+                                <label for="filter-transmission">Transmission</label>
+                                <select id="filter-transmission">
+                                    <option value="All">All Transmissions</option>
+                                    <option value="Manual">Manual</option>
+                                    <option value="Automatic">Automatic</option>
+                                </select>
+                            </div>
+                            
+                            <button id="btn-reset-filters" class="btn-secondary">
+                                <i data-lucide="rotate-ccw"></i>
+                                <span>Reset Filters</span>
+                            </button>
+                        </div>
+                        
+                        <!-- Results & Forecast Panel -->
+                        <div class="results-layout">
+                            <div class="results-header">
+                                <h3>Search Results <span id="results-count" class="badge">0 found</span></h3>
+                                <div class="results-actions" style="display: flex; gap: 1rem; align-items: center;">
+                                    <button id="btn-compare-selected" class="btn-primary hidden" style="padding: 0.5rem 1rem; font-size: 0.8rem; background: linear-gradient(135deg, #ffd600, #ff8f00); color: black; border-color: rgba(0,0,0,0.2); box-shadow: 0 4px 15px rgba(255, 214, 0, 0.2);">
+                                        <i data-lucide="award"></i>
+                                        <span>Conclude & Compare (<span id="compare-count">0</span>)</span>
+                                    </button>
+                                    <div class="sort-indicator">Sorted by KMs (lowest first)</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Cars Grid -->
+                            <div class="cars-grid" id="cars-list">
+                                <!-- Dynamic items here -->
+                                <div class="loading-state">
+                                    <div class="spinner"></div>
+                                    <p>Loading vehicle catalog...</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Forecast Workspace (Appears when a car is selected) -->
+                            <div id="forecast-panel" class="forecast-panel glass-card hidden">
+                                <button class="close-panel-btn" id="btn-close-forecast">
+                                    <i data-lucide="x"></i>
+                                </button>
+
+                                <!-- Comparative Conclusion Section -->
+                                <div id="conclusion-box" class="conclusion-box glass-card hidden" style="margin-bottom: 2rem; background: rgba(20, 22, 28, 0.95); border: 1px solid rgba(213, 0, 0, 0.25); padding: 1.5rem; display: flex; gap: 1.25rem; align-items: flex-start; box-shadow: 0 8px 30px rgba(213,0,0,0.1);">
+                                    <div class="conclusion-icon-wrapper" style="background: rgba(213, 0, 0, 0.1); width: 44px; height: 44px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; color: var(--color-primary); flex-shrink: 0; border: 1px solid rgba(213,0,0,0.3);">
+                                        <i data-lucide="award" style="width: 24px; height: 24px;"></i>
+                                    </div>
+                                    <div style="flex-grow: 1;">
+                                        <h3 style="font-family: var(--font-heading); font-size: 1.15rem; font-weight: 800; margin-bottom: 0.5rem; text-transform: uppercase; color: var(--text-main); display: flex; align-items: center; gap: 0.5rem;">
+                                            CarML Expert Conclusion & Verdict
+                                        </h3>
+                                        <div id="conclusion-text" style="font-size: 0.9rem; color: var(--text-main); line-height: 1.6; font-family: var(--font-body);">
+                                            <!-- Dynamically generated conclusion text -->
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="forecast-grid">
+                                    <!-- Selected Car Info -->
+                                    <div class="forecast-inputs-col">
+                                        <span class="panel-subtitle">Interactive Forecasting</span>
+                                        <h2 id="forecast-car-name">Selected Car Name</h2>
+                                        
+                                        <div class="selected-car-specs">
+                                            <div class="spec-chip"><i data-lucide="calendar"></i> <span id="spec-year">-</span></div>
+                                            <div class="spec-chip"><i data-lucide="navigation"></i> <span id="spec-kms">-</span> km</div>
+                                            <div class="spec-chip"><i data-lucide="tag"></i> <span id="spec-fuel">-</span></div>
+                                            <div class="spec-chip"><i data-lucide="settings"></i> <span id="spec-transmission">-</span></div>
+                                        </div>
+                                        
+                                        <div class="forecast-parameters">
+                                            <div class="form-group">
+                                                <label for="forecast-annual-run">
+                                                    Annual Usage: <span id="forecast-run-val">10,000</span> km/year
+                                                </label>
+                                                <input type="range" id="forecast-annual-run" min="1000" max="50000" step="1000" value="10000">
+                                            </div>
+                                            
+                                            <div class="price-summary-box">
+                                                <div class="price-row">
+                                                    <span class="price-label">Original Price (Lakhs)</span>
+                                                    <span class="price-value present" id="spec-present-price">-</span>
+                                                </div>
+                                                <div class="price-row">
+                                                    <span class="price-label">Current Value (Lakhs)</span>
+                                                    <span class="price-value selling" id="spec-selling-price">-</span>
+                                                </div>
+                                                <div class="price-row total-dep">
+                                                    <span class="price-label">Accrued Depreciation</span>
+                                                    <span class="price-value dep" id="spec-depreciation">-</span>
+                                                </div>
+                                            </div>
+                                            
+                                            <button id="btn-generate-forecast" class="btn-primary">
+                                                <i data-lucide="trending-down"></i>
+                                                <span>Update 5-Year Forecast</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Forecast Visualization -->
+                                    <div class="forecast-viz-col">
+                                        <div class="viz-header">
+                                            <h4>Depreciation Forecast Chart</h4>
+                                        </div>
+                                        <div class="chart-container">
+                                            <canvas id="forecastChart"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Forecast Table Breakdown -->
+                                <div class="forecast-table-wrapper">
+                                    <h4>Year-by-Year Depreciation Analysis</h4>
+                                    <div class="table-scroll">
+                                        <table class="forecast-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Year</th>
+                                                    <th>Car Age</th>
+                                                    <th>Cumulative KMs</th>
+                                                    <th>Predicted Depreciation (Lakhs)</th>
+                                                    <th>Estimated Resale Value (Lakhs)</th>
+                                                    <th>Retained Value (%)</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="forecast-table-body">
+                                                <!-- Dynamic Rows -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- TAB 2: CUSTOM ESTIMATOR -->
+                <section id="tab-estimate" class="tab-pane">
+                    <div class="estimate-layout">
+                        <!-- Valuation Input Form -->
+                        <div class="estimator-form-card glass-card">
+                            <div class="estimator-header">
+                                <i data-lucide="calculator"></i>
+                                <div>
+                                    <h2>Custom Vehicle Valuation</h2>
+                                    <p>Input vehicle specifications to predict depreciation and resale market value.</p>
+                                </div>
+                            </div>
+                            
+                            <form id="estimator-form">
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label for="est-car-name">Vehicle Model/Name</label>
+                                        <input type="text" id="est-car-name" list="car-name-datalist" placeholder="e.g. swift" required>
+                                        <datalist id="car-name-datalist">
+                                            <!-- Dynamically filled with top models -->
+                                        </datalist>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="est-present-price">Original/Present Price (Lakhs)</label>
+                                        <input type="number" id="est-present-price" placeholder="e.g. 6.5" step="0.01" min="0.1" required>
+                                        <span class="field-help">Original showroom price of the model</span>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="est-kms">Total Kms Driven</label>
+                                        <input type="number" id="est-kms" placeholder="e.g. 35000" min="0" required>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="est-year">Year of Purchase</label>
+                                        <input type="number" id="est-year" placeholder="e.g. 2018" min="1990" max="2025" value="2018" required>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="est-fuel">Fuel Type</label>
+                                        <select id="est-fuel" required>
+                                            <option value="Petrol">Petrol</option>
+                                            <option value="Diesel">Diesel</option>
+                                            <option value="CNG">CNG</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="est-transmission">Transmission Type</label>
+                                        <select id="est-transmission" required>
+                                            <option value="Manual">Manual</option>
+                                            <option value="Automatic">Automatic</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="est-seller">Seller Type</label>
+                                        <select id="est-seller" required>
+                                            <option value="Dealer">Dealer</option>
+                                            <option value="Individual">Individual</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="est-owner">Previous Owners</label>
+                                        <select id="est-owner" required>
+                                            <option value="0">0 (First Owner)</option>
+                                            <option value="1">1</option>
+                                            <option value="3">3+</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <button type="submit" class="btn-primary btn-large">
+                                    <i data-lucide="sparkles"></i>
+                                    <span>Estimate Resale Value</span>
+                                </button>
+                            </form>
+                        </div>
+                        
+                        <!-- Valuation Output Display -->
+                        <div class="estimator-result-card glass-card">
+                            <div class="estimator-result-empty" id="estimator-result-empty">
+                                <i data-lucide="help-circle" class="help-icon"></i>
+                                <h3>No Estimate Generated</h3>
+                                <p>Fill out the specifications form and click "Estimate Resale Value" to view predicted valuations powered by the Linear Regression model.</p>
+                            </div>
+                            
+                            <div class="estimator-result-content hidden" id="estimator-result-content">
+                                <div class="result-badge">Valuation Success</div>
+                                <h3 id="result-car-title">Suzuki Swift (2018)</h3>
+                                
+                                <div class="result-price-card">
+                                    <span class="result-price-label">Estimated Market Value</span>
+                                    <div class="result-price-value">
+                                        <span class="price-num" id="result-selling-price">4.25</span>
+                                        <span class="price-unit">Lakhs</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="valuation-breakdown">
+                                    <div class="breakdown-item">
+                                        <span class="bd-label">Original Price</span>
+                                        <span class="bd-val" id="result-present-price">6.50 Lakhs</span>
+                                    </div>
+                                    <div class="breakdown-item">
+                                        <span class="bd-label">Est. Depreciation</span>
+                                        <span class="bd-val highlight" id="result-depreciation">2.25 Lakhs</span>
+                                    </div>
+                                    <div class="breakdown-item">
+                                        <span class="bd-label">Retained Value (%)</span>
+                                        <span class="bd-val success" id="result-retained-pct">65.4%</span>
+                                    </div>
+                                    <div class="breakdown-item">
+                                        <span class="bd-label">Vehicle Age</span>
+                                        <span class="bd-val" id="result-age">7 Years</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="result-explanation">
+                                    <div class="expl-icon"><i data-lucide="info"></i></div>
+                                    <p>This valuation is calculated by applying a trained Linear Regression algorithm against historical sales data. Factors such as a higher mileage (kms) or automatic transmission will dynamically affect depreciation levels.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- TAB 3: MODEL INSIGHTS -->
+                <section id="tab-insights" class="tab-pane">
+                    <div class="insights-layout">
+                        <!-- Model Config & Metrics -->
+                        <div class="insights-grid">
+                            <div class="glass-card metric-info-card">
+                                <h3>Algorithm Details</h3>
+                                <div class="detail-row">
+                                    <span class="detail-label">Model Pipeline</span>
+                                    <span class="detail-val" id="model-algo-name">Linear Regression Pipeline</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Categorical Encoder</span>
+                                    <span class="detail-val">OneHotEncoder (handle_unknown='ignore')</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Numerical Scaler</span>
+                                    <span class="detail-val">Passthrough</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Target Variable</span>
+                                    <span class="detail-val">Depreciation (Present_Price - Selling_Price)</span>
+                                </div>
+                            </div>
+                            
+                            <div class="glass-card score-card r2">
+                                <div class="score-header">
+                                    <span class="score-title">R² Score (Coefficient of Determination)</span>
+                                    <i data-lucide="check-circle" class="score-icon"></i>
+                                </div>
+                                <div class="score-value" id="model-r2">-</div>
+                                <p class="score-desc">Indicates the proportion of variance in car depreciation that is predictable from the input features (closer to 1.0 is better).</p>
+                            </div>
+                            
+                            <div class="glass-card score-card mae">
+                                <div class="score-header">
+                                    <span class="score-title">Mean Absolute Error (MAE)</span>
+                                    <i data-lucide="activity" class="score-icon"></i>
+                                </div>
+                                <div class="score-value"><span id="model-mae">-</span> <span class="score-unit">Lakhs</span></div>
+                                <p class="score-desc">Average absolute difference between the predicted depreciation and the actual depreciation in the test set.</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Feature List & Actions -->
+                        <div class="insights-actions-section">
+                            <div class="glass-card features-list-card">
+                                <h3>Model Features Used</h3>
+                                <div class="features-wrapper">
+                                    <div class="feat-type">
+                                        <h5>Categorical Features</h5>
+                                        <div class="feat-tags" id="cat-features-list">
+                                            <!-- filled dynamically -->
+                                        </div>
+                                    </div>
+                                    <div class="feat-type">
+                                        <h5>Numerical Features</h5>
+                                        <div class="feat-tags" id="num-features-list">
+                                            <!-- filled dynamically -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="glass-card training-panel-card">
+                                <h3>Model Management</h3>
+                                <p>You can force the backend to reload the dataset and retrain the Linear Regression models dynamically.</p>
+                                
+                                <div class="training-status-box">
+                                    <div class="ts-indicator">
+                                        <span class="status-dot online"></span>
+                                        <span>Current model is loaded and healthy.</span>
+                                    </div>
+                                    <div class="retrain-log" id="retrain-log-console">
+                                        [System] Model loaded on startup. Ready for predictions.
+                                    </div>
+                                </div>
+                                
+                                <button id="btn-retrain-model" class="btn-primary">
+                                    <i data-lucide="refresh-cw"></i>
+                                    <span>Retrain Model Now</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="app.js"></script>
+    <script>
+        // Init lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
