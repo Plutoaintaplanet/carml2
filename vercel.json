@@ -2,14 +2,14 @@
   "version": 2,
   "builds": [
     {
-      "src": "CARML/main.py",
+      "src": "CARML/api.py",
       "use": "@vercel/python"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "CARML/main.py"
+      "dest": "CARML/api.py"
     }
   ]
 }
