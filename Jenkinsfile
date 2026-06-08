@@ -1,7 +1,6 @@
 pipeline {
 agent any
 
-```
 environment {
     DOCKER_IMAGE = "your-dockerhub-username/carml-app"
     IMAGE_TAG = "latest"
@@ -55,6 +54,6 @@ post {
         echo 'Pipeline failed. Check console output.'
     }
 }
-```
+
 
 }
