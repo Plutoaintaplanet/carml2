@@ -12,6 +12,129 @@ from sklearn.metrics import r2_score
 
 app = FastAPI()
 
+def page_style():
+    return """
+    <style>
+
+    body {
+        font-family: 'Segoe UI', sans-serif;
+        background: linear-gradient(
+            135deg,
+            #050505,
+            #111111,
+            #1d1d1d
+        );
+        color: white;
+        min-height: 100vh;
+        max-width: 1400px;
+        margin: auto;
+        padding: 30px;
+    }
+
+    h1 {
+        color: #ff2020;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        text-shadow: 0 0 20px rgba(255,0,0,0.4);
+    }
+
+    h2 {
+        color: #d8d8d8;
+    }
+
+    .card {
+        background: rgba(255,255,255,0.05);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 20px;
+        padding: 25px;
+        margin-top: 20px;
+        box-shadow: 0 0 30px rgba(255,0,0,0.15);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background: rgba(255,255,255,0.05);
+        backdrop-filter: blur(8px);
+        border-radius: 15px;
+        overflow: hidden;
+    }
+
+    th {
+        background: linear-gradient(
+            90deg,
+            #8b0000,
+            #ff0000
+        );
+        color: white;
+        padding: 12px;
+    }
+
+    td {
+        padding: 12px;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    tr:hover {
+        background: rgba(255,0,0,0.08);
+    }
+
+    input {
+        padding: 12px;
+        border-radius: 10px;
+        border: none;
+        background: #222;
+        color: white;
+    }
+
+    button {
+        padding: 12px 24px;
+        border-radius: 12px;
+        border: none;
+        background: linear-gradient(
+            90deg,
+            #ff0000,
+            #990000
+        );
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 20px rgba(255,0,0,0.6);
+    }
+
+    a {
+        color: #ff5050;
+        text-decoration: none;
+    }
+
+    a:hover {
+        color: white;
+    }
+
+    .winner {
+        margin-top: 30px;
+        padding: 20px;
+        border-radius: 20px;
+        text-align: center;
+        font-size: 2rem;
+        color: gold;
+        background: linear-gradient(
+            135deg,
+            #3d0000,
+            #7a0000
+        );
+        box-shadow: 0 0 30px rgba(255,215,0,0.25);
+    }
+
+    </style>
+    """
+
 # -------------------------
 # Load Dataset
 # -------------------------
@@ -120,65 +243,203 @@ print("Model R2 Score:", round(r2, 3))
 # -------------------------
 
 @app.get("/", response_class=HTMLResponse)
+@app.get("/", response_class=HTMLResponse)
 def home():
     return f"""
     <!DOCTYPE html>
     <html>
     <head>
         <title>CARML</title>
+
         <style>
-            body {{
-                font-family: Arial;
-                max-width: 900px;
-                margin: auto;
-                padding: 20px;
-            }}
 
-            input {{
-                padding: 8px;
-                margin: 5px;
-            }}
+        body {{
 
-            button {{
-                padding: 10px;
-            }}
+            font-family: 'Segoe UI', sans-serif;
+
+            background:
+            linear-gradient(
+                135deg,
+                #050505,
+                #111111,
+                #1d1d1d
+            );
+
+            color: white;
+
+            min-height: 100vh;
+
+            max-width: 1200px;
+
+            margin: auto;
+
+            padding: 40px;
+        }}
+
+        h1 {{
+
+            color: #ff2020;
+
+            font-size: 3rem;
+
+            letter-spacing: 4px;
+
+            text-transform: uppercase;
+
+            text-shadow:
+                0 0 20px rgba(255,0,0,0.4);
+        }}
+
+        h2 {{
+
+            color: #d8d8d8;
+        }}
+
+        p {{
+
+            color: #c0c0c0;
+        }}
+
+        .card {{
+
+            background:
+                rgba(255,255,255,0.05);
+
+            backdrop-filter:
+                blur(10px);
+
+            border:
+                1px solid rgba(255,255,255,0.1);
+
+            border-radius: 20px;
+
+            padding: 30px;
+
+            box-shadow:
+                0 0 30px rgba(255,0,0,0.15);
+        }}
+
+        input {{
+
+            width: 320px;
+
+            padding: 12px;
+
+            border-radius: 12px;
+
+            border: none;
+
+            background: #222;
+
+            color: white;
+
+            font-size: 16px;
+        }}
+
+        input:focus {{
+
+            outline: none;
+
+            box-shadow:
+                0 0 15px rgba(255,0,0,0.5);
+        }}
+
+        button {{
+
+            padding: 14px 30px;
+
+            border: none;
+
+            border-radius: 12px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #ff0000,
+                    #990000
+                );
+
+            color: white;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition: 0.3s;
+        }}
+
+        button:hover {{
+
+            transform: scale(1.05);
+
+            box-shadow:
+                0 0 20px rgba(255,0,0,0.6);
+        }}
+
+        .metric {{
+
+            font-size: 1.2rem;
+
+            color: #ffd700;
+
+            margin-bottom: 20px;
+        }}
+
         </style>
+
     </head>
 
     <body>
 
-        <h1>🚗 CARML</h1>
+        <h1>Car Recommendation System</h1>
 
-        <h2>Car Recommendation System</h2>
+        <h2>
+            AI Powered Vehicle Ownership Analytics
+        </h2>
 
         <p>
-            Linear Regression Model R² Score:
-            <b>{round(r2,3)}</b>
+            Premium Depreciation Forecasting &
+            5-Year Ownership Intelligence
         </p>
 
-        <form action="/search">
+        <div class="card">
 
-            <label>Minimum Budget (Lakhs)</label><br>
-            <input type="number"
-                   step="0.1"
-                   name="min_budget"
-                   required>
+            <div class="metric">
+                Linear Regression Model R² Score:
+                <b>{round(r2,3)}</b>
+            </div>
 
-            <br><br>
+            <form action="/search">
 
-            <label>Maximum Budget (Lakhs)</label><br>
-            <input type="number"
-                   step="0.1"
-                   name="max_budget"
-                   required>
+                <label>Minimum Budget (Lakhs)</label>
+                <br>
 
-            <br><br>
+                <input
+                    type="number"
+                    step="0.1"
+                    name="min_budget"
+                    required>
 
-            <button type="submit">
-                Search Cars
-            </button>
+                <br><br>
 
-        </form>
+                <label>Maximum Budget (Lakhs)</label>
+                <br>
+
+                <input
+                    type="number"
+                    step="0.1"
+                    name="max_budget"
+                    required>
+
+                <br><br>
+
+                <button type="submit">
+                    🔍 Search Cars
+                </button>
+
+            </form>
+
+        </div>
 
     </body>
     </html>
@@ -199,6 +460,9 @@ def search(min_budget: float, max_budget: float):
 
     html = f"""
     <html>
+    <head>
+    {page_style()}
+    </head>
     <body>
 
     <h1>Select 3 Cars</h1>
@@ -396,6 +660,7 @@ def compare(
 
     html = """
     <html>
+   
     <body>
 
     <h1>5-Year Comparison Results</h1>
