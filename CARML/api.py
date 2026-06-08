@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.responses import HTMLResponse
 import pandas as pd
 from pathlib import Path
 
@@ -9,24 +10,40 @@ DATA_PATH = BASE_DIR / "car_prediction_data.csv"
 
 df = pd.read_csv(DATA_PATH)
 
-@app.get("/")
+
+@app.get("/", response_class=HTMLResponse)
 def home():
-    return {
-        "message": "CARML API Running"
-    }
+    return """
+    <html>
+    <head>
+        <title>CARML</title>
+        <style>
+            body{
+                font-family: Arial;
+                max-width:800px;
+                margin:auto;
+                padding:20px;
+            }
+            input{
+                padding:8px;
+                margin:5px;
+            }
+            button{
+                padding:10px;
+            }
+        </style>
+    </head>
+    <body>
 
-@app.get("/cars")
-def get_cars(min_budget: float, max_budget: float):
+        <h1>🚗 CARML</h1>
+        <h3>Car Recommendation System</h3>
 
-    cars = df[
-        (df["Selling_Price"] >= min_budget)
-        &
-        (df["Selling_Price"] <= max_budget)
-    ]
+        <form action="/search">
 
-    cars = cars.sort_values(
-        by="Kms_Driven",
-        ascending=True
-    )
+            <label>Minimum Budget (Lakhs)</label><br>
+            <input type="number" step="0.1" name="min_budget" required>
 
-    return cars.head(20).to_dict(orient="records")
+            <br><br>
+
+            <label>Maximum Budget (Lakhs)</label><br>
+            <input type="number" step="0.1"
