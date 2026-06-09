@@ -342,4 +342,5 @@ https://carml.onrender.com
 CARML combines Machine Learning and DevOps practices to create a complete end-to-end vehicle analytics platform. The project demonstrates source control management, CI/CD automation, code quality analysis, vulnerability scanning, containerization, cloud deployment, and predictive analytics in a single integrated solution.
 
 The system enables users to make informed vehicle purchasing decisions through AI-driven depreciation forecasting and long-term ownership analysis.
-changes1
+
+demo
