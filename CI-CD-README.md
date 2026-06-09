@@ -1,87 +1,345 @@
-# CI/CD Setup for CARML
+# CARML - AI Powered Car Ownership Analytics
 
-## Files added
-- `Jenkinsfile` - full pipeline with Docker build + Docker Hub push + Vercel deployment.
-- `Jenkinsfile.no-docker-push` - same pipeline but without the Docker push stage.
-- `Dockerfile` - builds the FastAPI application as a Docker image using the `CARML/` subfolder.
-- `requirements.txt` - Python runtime dependencies for the application.
+## DevOps Lab Project
 
-## Jenkins pipeline behavior
+### Student Details
 
-Both Jenkinsfiles contain these stages:
-1. Checkout source code from GitHub.
-2. Install Python dependencies.
-3. Run code quality analysis with `flake8`.
-4. Perform dependency/vulnerability scanning using `trivy`.
-5. Build a Docker image.
+**Name:** Aakash Raghu
+**USN:** 1MS23IS002
+**Course:** DevOps Laboratory
 
-`Jenkinsfile` then also:
-6. Push the Docker image to Docker Hub.
-7. Trigger a Vercel deployment using the Vercel CLI.
+---
 
-`Jenkinsfile.no-docker-push` skips stage 6.
+# Project Overview
 
-## Required Jenkins credentials
+CARML (Car Machine Learning Analytics) is an AI-powered web application that helps users compare used cars and predict long-term ownership value. The system uses a Linear Regression Machine Learning model to estimate vehicle depreciation and future resale value based on various factors such as car age, mileage, fuel type, ownership history, and market value.
 
-Add these credentials in Jenkins:
-- `dockerhub-credentials` - Docker Hub username/password.
-- `vercel-token` - Vercel authentication token.
-- `vercel-scope` - Vercel scope or team name (for example `plutoaintaplanet`).
-- `sonar-token` - SonarCloud authentication token.
+The application allows users to:
 
-### SonarCloud details
-- Project Key: `Plutoaintaplanet_carml2`
-- Organization Key: `plutoaintaplanet`
-- Host URL: `https://sonarcloud.io`
+* Search cars based on budget.
+* Select and compare three vehicles.
+* Predict depreciation using Machine Learning.
+* Estimate future resale value.
+* Analyze 5-year ownership costs.
+* Generate a Best Buy Recommendation.
 
-If you use a self-hosted SonarQube instance instead, update `sonar.host.url` in the Jenkinsfiles accordingly.
+---
 
-## GitHub Actions
+# Technology Stack
 
-New GitHub Actions workflows have been added in `.github/workflows/`:
-- `ci-cd.yml` — full pipeline with Docker build, Docker Hub push, and Vercel deploy.
-- `ci-cd-no-docker-push.yml` — pipeline with Docker build but without pushing the image.
+## Frontend
 
-### GitHub Actions secrets
-Add the following secrets in your GitHub repository Settings > Secrets:
-- `DOCKERHUB_USERNAME`
-- `DOCKERHUB_PASSWORD`
-- `DOCKERHUB_REPO` — Docker Hub repository name (for example `myuser/carml-app`).
-- `SONAR_TOKEN`
-- `VERCEL_TOKEN`
-- `VERCEL_SCOPE`
+* HTML5
+* CSS3
+* Ferrari-inspired Premium UI Theme
 
-## Configuration
+## Backend
 
-Edit `Jenkinsfile` and `Jenkinsfile.no-docker-push` to set:
-- `DOCKER_IMAGE` to your Docker Hub repository name, e.g. `myuser/carml-app`
-- `IMAGE_TAG` to the desired tag, e.g. `latest`
+* Python
+* FastAPI
 
-## Deployment
+## Machine Learning
 
-The Vercel deploy stage uses the Vercel CLI. The repo includes a `vercel.json` file so Vercel can deploy using the `Dockerfile`.
+* Scikit-Learn
+* Linear Regression
+* Pandas
+* NumPy
 
-If you prefer another host, replace the deploy stage with your cloud provider's CLI or API command.
+## DevOps Tools
 
-## Notes
+### Source Control
 
-- The vulnerability scan runs `aquasec/trivy:latest` against the workspace.
-- If you want a versioned `requirements-dev.txt`, add linters/test tools there and update the Jenkinsfiles.
-- The Docker container exposes port `8000` and runs `uvicorn server:app`.
+* Git
+* GitHub
 
-## Running both Jenkins pipelines from CLI
+### Continuous Integration
 
-A helper script is included: `run-jenkins-pipelines.ps1`.
+* Jenkins
 
-Usage:
+### Code Quality Analysis
 
-```powershell
-cd C:\Users\admin\Documents\carml
-.\run-jenkins-pipelines.ps1 -JenkinsUrl 'http://localhost:8080/' -CliJar 'C:\Users\admin\Downloads\jenkins-cli (1).jar' -Auth 'admin:YOUR_API_TOKEN'
+* Flake8
+
+### Vulnerability Scanning
+
+* Trivy
+
+### Containerization
+
+* Docker
+
+### Deployment
+
+* Render
+
+---
+
+# Project Architecture
+
+GitHub Repository
+
+↓
+
+Jenkins Pipeline
+
+↓
+
+Flake8 Code Quality Analysis
+
+↓
+
+Trivy Vulnerability Scan
+
+↓
+
+Docker Image Build
+
+↓
+
+GitHub Push
+
+↓
+
+Render Deployment
+
+↓
+
+Live Application
+
+---
+
+# Machine Learning Model
+
+## Algorithm Used
+
+Linear Regression
+
+## Features Used
+
+* Car Name
+* Fuel Type
+* Seller Type
+* Transmission
+* Present Price
+* Kilometers Driven
+* Owner Count
+* Car Age
+
+## Target Variable
+
+Vehicle Depreciation
+
+### Formula
+
+Depreciation = Present Price − Selling Price
+
+---
+
+# Key Features
+
+## Budget-Based Search
+
+Users can search for vehicles within a specified price range.
+
+## Multi-Car Comparison
+
+The system allows users to compare three cars simultaneously.
+
+## Depreciation Prediction
+
+Machine Learning predicts future depreciation.
+
+## Ownership Forecast
+
+Predicts future vehicle value after 5 years.
+
+## Best Buy Recommendation
+
+The application identifies the most economical vehicle based on predicted future value.
+
+---
+
+# CI/CD Pipeline
+
+The Jenkins pipeline performs the following tasks:
+
+## Stage 1
+
+Checkout source code from GitHub.
+
+## Stage 2
+
+Install Python dependencies.
+
+## Stage 3
+
+Run Flake8 code quality analysis.
+
+## Stage 4
+
+Run Trivy vulnerability scan.
+
+## Stage 5
+
+Build Docker image.
+
+## Stage 6
+
+Push Docker image (Optional Pipeline).
+
+## Stage 7
+
+Deploy application to Render.
+
+---
+
+# Jenkins Pipelines
+
+## Pipeline 1
+
+### Full CI/CD Pipeline
+
+Includes:
+
+* GitHub Checkout
+* Dependency Installation
+* Flake8 Analysis
+* Trivy Scan
+* Docker Build
+* Docker Push
+* Deployment
+
+---
+
+## Pipeline 2
+
+### CI/CD Pipeline Without Docker Push
+
+Includes:
+
+* GitHub Checkout
+* Dependency Installation
+* Flake8 Analysis
+* Trivy Scan
+* Docker Build
+* Deployment
+
+Docker Push Stage Removed.
+
+---
+
+# Code Quality Analysis
+
+Tool Used:
+
+## Flake8
+
+Flake8 performs:
+
+* Style Checking
+* Syntax Validation
+* Error Detection
+* PEP8 Compliance Checks
+* Unused Import Detection
+
+---
+
+# Vulnerability Scanning
+
+Tool Used:
+
+## Trivy
+
+Trivy scans:
+
+* Python Dependencies
+* Docker Images
+* Operating System Packages
+* Known CVEs
+
+---
+
+# Docker
+
+## Build Command
+
+```bash
+docker build -t carml .
 ```
 
-This script will:
-- create `carml-full-pipeline` and `carml-no-docker-push` jobs if missing
-- trigger both pipelines
-- poll and display build progress and final console output
-change 1
+## Run Command
+
+```bash
+docker run -p 8000:8000 carml
+```
+
+---
+
+# Running Locally
+
+## Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+## Start Application
+
+```bash
+uvicorn CARML.api:app --reload
+```
+
+## Access Application
+
+```text
+http://127.0.0.1:8000
+```
+
+---
+
+# Deployment
+
+Platform Used:
+
+## Render
+
+Application URL:
+
+```text
+https://carml.onrender.com
+```
+
+---
+
+# Project Workflow
+
+1. User enters budget range.
+2. Application displays matching vehicles.
+3. User selects three cars.
+4. User enters annual running distance.
+5. Machine Learning model predicts depreciation.
+6. Future value is estimated for each car.
+7. System compares all vehicles.
+8. Best Buy Recommendation is generated.
+
+---
+
+# Future Enhancements
+
+* Random Forest Regression
+* XGBoost Model
+* Real-Time Vehicle Market Data
+* Price Trend Visualization
+* User Authentication
+* Vehicle Image Gallery
+* Advanced Ownership Cost Analysis
+* Fuel Cost Forecasting
+
+---
+
+# Conclusion
+
+CARML combines Machine Learning and DevOps practices to create a complete end-to-end vehicle analytics platform. The project demonstrates source control management, CI/CD automation, code quality analysis, vulnerability scanning, containerization, cloud deployment, and predictive analytics in a single integrated solution.
+
+The system enables users to make informed vehicle purchasing decisions through AI-driven depreciation forecasting and long-term ownership analysis.
+changes1
